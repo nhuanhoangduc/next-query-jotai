@@ -1,11 +1,14 @@
 import Head from "next/head";
-import { atom, useAtomValue } from "jotai";
-import { atomFamily } from "jotai/utils";
+import { atom, useAtomValue, createStore } from "jotai";
+import { atomFamily, useAtomCallback } from "jotai/utils";
 import _ from "lodash";
 import { useQuery, QueryClient, dehydrate } from "@tanstack/react-query";
 
 // state
-// const PostState = atomFamily(({ _id }) => atom(), _.isEqual);
+const PostState = atomFamily(({ _id }) => atom({}), _.isEqual);
+const setPostCallback = (get, set, post) => {
+  set(PostState({ _id: post.id }), post);
+};
 
 // query
 const queryFn = ({ postId }) =>
@@ -14,14 +17,21 @@ const queryFn = ({ postId }) =>
   );
 const queryKey = ["getPosts"];
 const useGetPosts = (queryParams) => {
+  const setPostState = useAtomCallback(setPostCallback);
+
   const query = useQuery({
     queryKey: queryKey,
-    queryFn: () => queryFn(queryParams),
+    queryFn: async () => {
+      const res = await queryFn(queryParams);
+      setPostState(res);
+      return res;
+    },
   });
   return query;
 };
 
-export async function getStaticProps() {
+export async function getStaticProps(context) {
+  const store = createStore();
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
@@ -36,6 +46,8 @@ export async function getStaticProps() {
     queryKey: queryKey,
     queryFn: () => queryFn({ postId: 1 }),
   });
+  const post = queryClient.getQueryData(queryKey);
+  setPostCallback(store.get, store.set, post);
 
   return {
     props: {
@@ -45,7 +57,9 @@ export async function getStaticProps() {
 }
 
 export default function Home() {
-  const { data: post, isLoading } = useGetPosts({ postId: 1 });
+  const postId = 1;
+  const { isLoading } = useGetPosts({ postId });
+  const post = useAtomValue(PostState({ _id: postId }));
 
   if (isLoading) return "Loading....";
   return (
