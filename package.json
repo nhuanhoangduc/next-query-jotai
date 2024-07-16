@@ -3,15 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
+    "start": "next dev",
     "lint": "next lint"
   },
   "dependencies": {
+    "jotai": "^2.9.0",
+    "lodash": "^4.17.21",
+    "next": "14.2.5",
     "react": "^18",
-    "react-dom": "^18",
-    "next": "14.2.5"
+    "react-dom": "^18"
   },
   "devDependencies": {
     "eslint": "^8",
