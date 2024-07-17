@@ -1,13 +1,16 @@
 import Head from "next/head";
-import { useAtomValue } from "jotai";
+import { useAtomValue, createStore } from "jotai";
 import { atomFamily, useAtomCallback } from "jotai/utils";
 import _ from "lodash";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, QueryClient, dehydrate } from "@tanstack/react-query";
 
 import atomNext from "./atomNext";
 
 // state
-const PostState = atomFamily(({ _id }) => atomNext({}, _id), _.isEqual);
+const PostState = atomFamily(
+  ({ _id }) => atomNext({}, `PostState_${_id}`),
+  _.isEqual
+);
 const setPostCallback = (get, set, post) => {
   set(PostState({ _id: post.id }), post);
 };
@@ -32,32 +35,34 @@ const useGetPosts = (queryParams) => {
   return query;
 };
 
-// export async function getStaticProps(context) {
-//   const store = createStore();
-//   const queryClient = new QueryClient({
-//     defaultOptions: {
-//       queries: {
-//         // With SSR, we usually want to set some default staleTime
-//         // above 0 to avoid refetching immediately on the client
-//         staleTime: 60 * 1000,
-//       },
-//     },
-//   });
+export async function getStaticProps(context) {
+  const store = createStore();
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        // With SSR, we usually want to set some default staleTime
+        // above 0 to avoid refetching immediately on the client
+        staleTime: 60 * 1000,
+      },
+    },
+  });
 
-//   await queryClient.prefetchQuery({
-//     queryKey: queryKey,
-//     queryFn: () => queryFn({ postId: 1 }),
-//   });
-//   const post = queryClient.getQueryData(queryKey);
-//   setPostCallback(store.get, store.set, post);
+  await queryClient.prefetchQuery({
+    queryKey: queryKey,
+    queryFn: () => queryFn({ postId: 1 }),
+  });
+  const post = queryClient.getQueryData(queryKey);
+  setPostCallback(store.get, store.set, post);
 
-//   return {
-//     props: {
-//       dehydratedQueryState: dehydrate(queryClient),
-//       dehydratedState: {},
-//     },
-//   };
-// }
+  console.log(global.cacheStore);
+
+  return {
+    props: {
+      dehydratedQueryState: dehydrate(queryClient),
+      dehydratedState: {},
+    },
+  };
+}
 
 export default function Home() {
   const postId = 1;
