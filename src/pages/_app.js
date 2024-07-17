@@ -4,8 +4,10 @@ import {
   QueryClient,
   QueryClientProvider,
 } from "@tanstack/react-query";
-import { Provider } from "jotai";
+import { Provider, createStore } from "jotai";
 import _ from "lodash";
+
+global.store = createStore();
 
 export default function App({ Component, pageProps }) {
   // init query client
@@ -24,18 +26,18 @@ export default function App({ Component, pageProps }) {
 
   // hydrate cache store
   useMemo(() => {
-    // if (_.isObject(pageProps.dehydratedCacheStore)) {
-    //   global.cacheStore = new Map(
-    //     Object.entries(pageProps.dehydratedCacheStore)
-    //   );
-    // }
+    if (_.isObject(pageProps.dehydratedCacheStore)) {
+      global.cacheStore = new Map(
+        Object.entries(pageProps.dehydratedCacheStore)
+      );
+    }
     return null;
   }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
       <HydrationBoundary state={pageProps?.dehydratedQueryState}>
-        <Provider>
+        <Provider store={global.store}>
           <Component {...pageProps} />
         </Provider>
       </HydrationBoundary>

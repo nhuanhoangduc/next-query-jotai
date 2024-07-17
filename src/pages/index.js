@@ -36,7 +36,6 @@ const useGetPosts = (queryParams) => {
 };
 
 export async function getStaticProps(context) {
-  const store = createStore();
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
@@ -52,7 +51,7 @@ export async function getStaticProps(context) {
     queryFn: () => queryFn({ postId: 1 }),
   });
   const post = queryClient.getQueryData(queryKey);
-  setPostCallback(store.get, store.set, post);
+  setPostCallback(global.store.get, global.store.set, post);
 
   return {
     props: {
@@ -66,8 +65,6 @@ export default function Home() {
   const postId = 1;
   const { isLoading } = useGetPosts({ postId });
   const post = useAtomValue(PostState({ _id: postId }));
-
-  console.log(post, isLoading);
 
   if (isLoading) return "Loading....";
   return (
