@@ -2,7 +2,7 @@ import Head from "next/head";
 import { useAtomValue, createStore } from "jotai";
 import { atomFamily, useAtomCallback } from "jotai/utils";
 import _ from "lodash";
-import { useQuery, QueryClient, dehydrate } from "@tanstack/react-query";
+import { useQuery, dehydrate } from "@tanstack/react-query";
 
 import atomNext from "./atomNext";
 
@@ -35,18 +35,8 @@ const useGetPosts = (queryParams) => {
   return query;
 };
 
-export async function getStaticProps(context) {
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        // With SSR, we usually want to set some default staleTime
-        // above 0 to avoid refetching immediately on the client
-        staleTime: 60 * 1000,
-      },
-    },
-  });
-
-  await queryClient.prefetchQuery({
+export async function getStaticProps() {
+  await global.queryClient.prefetchQuery({
     queryKey: queryKey,
     queryFn: () => queryFn({ postId: 1 }),
   });
