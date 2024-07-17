@@ -6,7 +6,7 @@ let incrementId = 1;
 global.cacheStore = new Map();
 
 const atomNext = (defaultState, id = incrementId++) => {
-  // server side
+  // server side - update both atom and cache store
   if (isServer) {
     const baseAtom = atom(defaultState);
     const derivedAtom = atom(
@@ -21,7 +21,7 @@ const atomNext = (defaultState, id = incrementId++) => {
     return derivedAtom;
   }
 
-  // client side
+  // client side - get atom default state from cache store
   else {
     const cached = global.cacheStore.get(id);
     const baseAtom = atom(cached || defaultState);
