@@ -1,8 +1,9 @@
 import { atom } from "jotai/vanilla";
 
-const cacheStore = new Map();
 const isServer = typeof window === "undefined";
 let incrementId = 1;
+
+global.cacheStore = new Map();
 
 const atomNext = (defaultState, id = incrementId++) => {
   // server side
@@ -14,7 +15,7 @@ const atomNext = (defaultState, id = incrementId++) => {
         const newState =
           typeof update === "function" ? update(get(baseAtom)) : update;
         set(baseAtom, newState);
-        cacheStore.set(id, newState);
+        global.cacheStore.set(id, newState);
       }
     );
     return derivedAtom;
@@ -22,12 +23,10 @@ const atomNext = (defaultState, id = incrementId++) => {
 
   // client side
   else {
-    const cached = cacheStore.get(id);
+    const cached = global.cacheStore.get(id);
     const baseAtom = atom(cached || defaultState);
     return baseAtom;
   }
 };
-
-global.cacheStore = cacheStore;
 
 export default atomNext;

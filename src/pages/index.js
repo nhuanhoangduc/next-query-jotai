@@ -54,12 +54,10 @@ export async function getStaticProps(context) {
   const post = queryClient.getQueryData(queryKey);
   setPostCallback(store.get, store.set, post);
 
-  console.log(global.cacheStore);
-
   return {
     props: {
       dehydratedQueryState: dehydrate(queryClient),
-      dehydratedState: {},
+      dehydratedCacheStore: Object.fromEntries(global.cacheStore),
     },
   };
 }
@@ -68,6 +66,8 @@ export default function Home() {
   const postId = 1;
   const { isLoading } = useGetPosts({ postId });
   const post = useAtomValue(PostState({ _id: postId }));
+
+  console.log(post, isLoading);
 
   if (isLoading) return "Loading....";
   return (

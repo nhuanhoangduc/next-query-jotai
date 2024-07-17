@@ -1,12 +1,14 @@
-import { useState } from "react";
+import { useState, useLayoutEffect, useMemo } from "react";
 import {
   HydrationBoundary,
   QueryClient,
   QueryClientProvider,
 } from "@tanstack/react-query";
 import { Provider } from "jotai";
+import _ from "lodash";
 
 export default function App({ Component, pageProps }) {
+  // init query client
   const [queryClient] = useState(
     () =>
       new QueryClient({
@@ -19,6 +21,16 @@ export default function App({ Component, pageProps }) {
         },
       })
   );
+
+  // hydrate cache store
+  useMemo(() => {
+    // if (_.isObject(pageProps.dehydratedCacheStore)) {
+    //   global.cacheStore = new Map(
+    //     Object.entries(pageProps.dehydratedCacheStore)
+    //   );
+    // }
+    return null;
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
