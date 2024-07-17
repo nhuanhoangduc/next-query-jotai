@@ -3,7 +3,10 @@ import { atom } from "jotai/vanilla";
 const isServer = typeof window === "undefined";
 let incrementId = 1;
 
-global.cacheStore = new Map();
+// init cache store
+if (!global.cacheStore) {
+  global.cacheStore = new Map();
+}
 
 const atomNext = (defaultState, id = incrementId++) => {
   // server side - update both atom and cache store
