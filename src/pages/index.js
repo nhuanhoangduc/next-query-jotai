@@ -1,11 +1,13 @@
 import Head from "next/head";
-import { atom, useAtomValue } from "jotai";
+import { useAtomValue } from "jotai";
 import { atomFamily, useAtomCallback } from "jotai/utils";
 import _ from "lodash";
 import { useQuery } from "@tanstack/react-query";
 
+import atomNext from "./atomNext";
+
 // state
-const PostState = atomFamily(({ _id }) => atom({}), _.isEqual);
+const PostState = atomFamily(({ _id }) => atomNext({}, _id), _.isEqual);
 const setPostCallback = (get, set, post) => {
   set(PostState({ _id: post.id }), post);
 };
