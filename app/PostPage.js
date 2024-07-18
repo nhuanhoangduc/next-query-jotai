@@ -6,7 +6,7 @@ import { useAtomValue } from "jotai";
 import { PostState } from "./state";
 import useGetPosts from "./useGetPosts";
 
-export default function Post() {
+export default function PostPage() {
   const postId = 1;
   const { isLoading, data } = useGetPosts({ postId });
   const post = useAtomValue(PostState({ _id: postId }));
