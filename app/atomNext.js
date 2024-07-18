@@ -34,4 +34,12 @@ const atomNext = (defaultState, id = incrementId++) => {
   }
 };
 
+export const hydrateServerState = (dehydratedState) => {
+  global.cacheStore = new Map(Object.entries(dehydratedState));
+};
+
+export const dehydrateServerState = (cacheStore) => {
+  return Object.fromEntries(cacheStore);
+};
+
 export default atomNext;
