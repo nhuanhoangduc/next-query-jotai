@@ -8,19 +8,19 @@ if (!global.cacheStore) {
   global.cacheStore = new Map();
 }
 
-const atomNext = (defaultState, id = incrementId++) => {
+const atomNext = (defaultState, stateId = incrementId++) => {
   // server side - update both atom and cache store
   if (isServer) {
     const baseAtom = atom(defaultState);
     const derivedAtom = atom(
-      (get) => global.cacheStore.get(id),
+      (get) => global.cacheStore.get(stateId),
       (get, set, update) => {
         const newState =
           typeof update === "function"
-            ? update(global.cacheStore.get(id))
+            ? update(global.cacheStore.get(stateId))
             : update;
         set(baseAtom, newState);
-        global.cacheStore.set(id, newState);
+        global.cacheStore.set(stateId, newState);
       }
     );
     return derivedAtom;
@@ -28,7 +28,7 @@ const atomNext = (defaultState, id = incrementId++) => {
 
   // client side - get atom default state from cache store
   else {
-    const cached = global.cacheStore.get(id);
+    const cached = global.cacheStore.get(stateId);
     const baseAtom = atom(cached || defaultState);
     return baseAtom;
   }
