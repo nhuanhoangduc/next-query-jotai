@@ -1,8 +1,7 @@
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import PostPage from "./PostPage";
 import { queryKey, queryFn, setStateCallback } from "./useGetPosts";
-import { PostState } from "./state";
-import { JotaiHydrationBoundary } from "./HydrationBoundary";
+import JotaiHydrationBoundary from "./JotaiHydrationBoundary";
 
 export default async function Home() {
   await global.queryClient.prefetchQuery({
