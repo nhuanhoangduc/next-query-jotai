@@ -1,31 +1,37 @@
-import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import {
+  dehydrate,
+  HydrationBoundary,
+  QueryClient,
+} from "@tanstack/react-query";
 import PostPage from "./PostPage";
 import { queryKey, queryFn, setStateCallback } from "./useGetPosts";
 import JotaiHydrationBoundary from "./JotaiHydrationBoundary";
-import { dehydrateServerState } from "./atomNext";
 
 export default async function Home() {
-  await global.queryClient.prefetchQuery({
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        // With SSR, we usually want to set some default staleTime
+        // above 0 to avoid refetching immediately on the client
+        staleTime: 60 * 1000,
+      },
+    },
+  });
+
+  await queryClient.prefetchQuery({
     queryKey,
     queryFn: () => queryFn({ postId: 1 }),
   });
-
-  setStateCallback(global.store.get, global.store.set, {
-    userId: 1,
-    id: 1,
-    title:
-      "sunt aut facere repellat provident occaecati excepturi optio reprehenderit",
-    body:
-      "quia et suscipit\n" +
-      "suscipit recusandae consequuntur expedita et cum\n" +
-      "reprehenderit molestiae ut ut quas totam\n" +
-      "nostrum rerum est autem sunt rem eveniet architecto",
-  });
+  const post = queryClient.getQueryData(queryKey);
+  setStateCallback(global.store.get, global.store.set, post);
 
   return (
     <main>
       <HydrationBoundary state={dehydrate(queryClient)}>
-        <JotaiHydrationBoundary state={dehydrateServerState(global.cacheStore)}>
+        <JotaiHydrationBoundary
+          state={Object.fromEntries(global.cacheStore)}
+          queryClient={dehydrate(queryClient)}
+        >
           <PostPage />
         </JotaiHydrationBoundary>
       </HydrationBoundary>
