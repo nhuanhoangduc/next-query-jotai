@@ -1,9 +1,19 @@
-import Posts from "./posts";
+import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 
-export default function Home() {
+import Posts from "./posts";
+import { queryKey, queryFn } from "./useGetPosts";
+
+export default async function Home() {
+  await global.queryClient.prefetchQuery({
+    queryKey,
+    queryFn,
+  });
+
   return (
     <main>
-      <Posts />
+      <HydrationBoundary state={dehydrate(queryClient)}>
+        <Posts />
+      </HydrationBoundary>
     </main>
   );
 }

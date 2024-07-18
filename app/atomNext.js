@@ -1,3 +1,5 @@
+"use client";
+
 import { atom } from "jotai/vanilla";
 
 const isServer = typeof window === "undefined";

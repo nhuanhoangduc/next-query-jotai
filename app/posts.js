@@ -8,7 +8,7 @@ import useGetPosts from "./useGetPosts";
 
 export default function Post() {
   const postId = 1;
-  const { isLoading } = useGetPosts({ postId });
+  const { isLoading, data } = useGetPosts({ postId });
   const post = useAtomValue(PostState({ _id: postId }));
 
   if (isLoading) return "Loading....";
