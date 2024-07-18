@@ -20,7 +20,9 @@ export default async function Home() {
       },
     },
   });
-  await prefetchQueries(queryClient, [useGetPosts]);
+  await prefetchQueries(queryClient, [
+    { ...useGetPosts, queryFn: () => useGetPosts.queryFn({ postId: 1 }) },
+  ]);
 
   return (
     <main>

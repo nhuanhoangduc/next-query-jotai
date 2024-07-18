@@ -12,6 +12,7 @@ export default function PostPage() {
   const post = useAtomValue(PostState({ _id: postId }));
 
   if (isLoading) return "Loading....";
+  if (!post) return;
   return (
     <>
       <Head>

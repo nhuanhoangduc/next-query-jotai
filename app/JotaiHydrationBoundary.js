@@ -4,7 +4,7 @@ import { useMemo } from "react";
 
 const isServer = typeof window === "undefined";
 
-export const JotaiHydrationBoundary = ({ children, state }) => {
+export const JotaiHydrationBoundary = ({ children, state, queryClient }) => {
   useMemo(() => {
     if (!isServer) {
       global.cacheStore = new Map(Object.entries(state));
