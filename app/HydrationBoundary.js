@@ -6,7 +6,8 @@ import {
 const HydrationBoundary = ({ children }) => {
   return (
     <main>
-      <QueryHydrationBoundary state={dehydrate(queryClient)}>
+      {/* react query hydration boundary */}
+      <QueryHydrationBoundary state={dehydrate(global.queryClient)}>
         {children}
       </QueryHydrationBoundary>
     </main>
