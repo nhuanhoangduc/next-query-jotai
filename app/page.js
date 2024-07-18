@@ -2,10 +2,13 @@ import {
   dehydrate,
   HydrationBoundary,
   QueryClient,
+  useQueries,
 } from "@tanstack/react-query";
 import PostPage from "./PostPage";
-import { queryKey, queryFn, setStateCallback } from "./useGetPosts";
+// import { queryKey, queryFn, setStateCallback } from "./useGetPosts";
 import JotaiHydrationBoundary from "./JotaiHydrationBoundary";
+import prefetchQueries from "./prefetchQueries";
+import * as useGetPosts from "./useGetPosts";
 
 export default async function Home() {
   const queryClient = new QueryClient({
@@ -17,21 +20,12 @@ export default async function Home() {
       },
     },
   });
-
-  await queryClient.prefetchQuery({
-    queryKey,
-    queryFn: () => queryFn({ postId: 1 }),
-  });
-  const post = queryClient.getQueryData(queryKey);
-  setStateCallback(global.store.get, global.store.set, post);
+  await prefetchQueries(queryClient, [useGetPosts]);
 
   return (
     <main>
       <HydrationBoundary state={dehydrate(queryClient)}>
-        <JotaiHydrationBoundary
-          state={Object.fromEntries(global.cacheStore)}
-          queryClient={dehydrate(queryClient)}
-        >
+        <JotaiHydrationBoundary state={Object.fromEntries(global.cacheStore)}>
           <PostPage />
         </JotaiHydrationBoundary>
       </HydrationBoundary>
