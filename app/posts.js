@@ -11,8 +11,6 @@ export default function Post() {
   const { isLoading, data } = useGetPosts({ postId });
   const post = useAtomValue(PostState({ _id: postId }));
 
-  console.log(data);
-
   if (isLoading) return "Loading....";
   return (
     <>

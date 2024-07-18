@@ -1,5 +1,3 @@
-"use client";
-
 import { atom } from "jotai/vanilla";
 
 const isServer = typeof window === "undefined";
@@ -15,10 +13,12 @@ const atomNext = (defaultState, id = incrementId++) => {
   if (isServer) {
     const baseAtom = atom(defaultState);
     const derivedAtom = atom(
-      (get) => get(baseAtom),
+      (get) => global.cacheStore.get(id),
       (get, set, update) => {
         const newState =
-          typeof update === "function" ? update(get(baseAtom)) : update;
+          typeof update === "function"
+            ? update(global.cacheStore.get(id))
+            : update;
         set(baseAtom, newState);
         global.cacheStore.set(id, newState);
       }
