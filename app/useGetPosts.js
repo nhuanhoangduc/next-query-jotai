@@ -14,7 +14,7 @@ export const queryFn = ({ postId }) =>
   );
 
 // export set state callback
-const setStateCallback = (get, set, post) => {
+export const setStateCallback = (get, set, post) => {
   set(PostState({ _id: post.id }), post);
 };
 
